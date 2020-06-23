@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html ng-app="BouncingBall">
+<head>
+    <title>Bouncing Ball</title>
+</head>
+<body>
+    <div ng-view></div>
+    <script src="../scripts/angular.js"></script>
+    <script src="../scripts/jquery.min.js" type="text/javascript"></script>
+    <script src="../scripts/highcharts.js"></script>
+    <script src="chart.js"></script>
+    <script>
+        function MainCtrl($scope, $http){
+
+        	var h0 = 5      
+			var v = 0         
+			var g = 10       
+			var t = 0         
+			var dt = 0.01    
+			var rho = 0.75   
+			var tau = 0.10     
+			var hmax = h0      
+			var h = h0
+			var hstop = 0.01   
+			var freefall = 1 
+			var t_last = -Math.sqrt(2*h0/g) 
+			var vmax = Math.sqrt(2 * hmax * g)
+			var H = []
+			var T = []
+			var nbounce = 0
+			while(hmax > hstop){
+				
+			  if(freefall == 1){
+			    hnew = h + v*dt - 0.5*g*dt*dt
+			    if(hnew<0){
+				  nbounce++
+			      t = t_last + 2*Math.sqrt(2*hmax/g)
+			      freefall = 0
+			      t_last = t + tau
+			      h = 0}
+			    else{
+			      t = t + dt
+			      v = v - g*dt
+			      h = hnew}}
+			  else{
+			    t = t + tau
+			    vmax = vmax * rho
+			    v = vmax
+			    freefall = 1
+			    h = 0}
+			  hmax = 0.5*vmax*vmax/g
+			  H.push(h)
+			  T.push(t)
+			}
+
+		// console.log(H,T)
+			console.log(nbounce)
+
+
+
+
+
+            var data = {"xData": T,"yData":[{
+            	"name": "Height of the ball, at a given instant",
+            	"data": H
+            }]}
+            
+            $scope.lineChartYData=data.yData
+            $scope.lineChartXData=data.xData
+        }
+    </script>
+    <script>
+    angular.module('BouncingBall',['AngularChart'], function( $routeProvider, $locationProvider ){
+        $routeProvider.when('/',{
+            template: '<chart title="BouncingBall" xData="lineChartXData" yData="lineChartYData" xName="Time" yName="Height" subtitle="Height of the ball vs time, for a fixed coefficient of restitution and initial height"></chart>',
+            controller: MainCtrl
+            })
+    })
+    </script>
+	<h2>
+		Current Data - 
+	</h2>
+	<h3>
+		Initial Height(m) = 5
+	</h3>
+	<h3>
+		Coefficient of Restitution = 0.75
+	</h3>
+	<h3>
+		Number of Bounces  = 11
+	</h3>	
+	<h1>
+		Enter Data - 
+	</h1>
+	<form action = "/api/coordinates" method = "POST">
+		<div>
+				<label>Enter Initial Height - </label>
+                <input type="number" name="height" placeholder="Initial Height" step = "0.1">
+        </div>
+        <div>
+				<label>Enter Coefficient of Restitution - Range (0,1) - </label>
+                <input type="number" name="coefficient" placeholder="Coefficient of Restitution" step = "0.1">
+        </div>
+		<div>
+                <button >Submit</button>
+        </div>
+	</form>
+</body>
+</html>
