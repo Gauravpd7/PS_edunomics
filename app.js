@@ -14,7 +14,7 @@ app.get('/graph',(req,res)=>{
 	db.Coordinate.find()
 	.then(function(foundC){
 		console.log(foundC[0].coefficient);
-		res.sendFile(__dirname+'/views'+'/index1.html',{coord: foundC});
+		res.render(__dirname+'/views'+'/index1.ejs',{coord: foundC});
 	})
 	.catch(function(err){
 		res.send(err);
@@ -31,7 +31,7 @@ app.get("/api/coordinates",(req,res)=>{
 });
 
 app.post("/api/coordinates",(req,res)=>{
-	db.Coordinate.remove();
+	
 	var height = req.body.height;
 	var coefficient = req.body.coefficient;
 			var h0 = height        
@@ -74,19 +74,25 @@ app.post("/api/coordinates",(req,res)=>{
 			  H.push(h)
 			  T.push(t)
 			}
-	db.Coordinate.create({
-		coefficient: coefficient,
-		height: height,
-		x: H,
-		t:T,
-		bounces:nbounce
+	db.Coordinate.deleteMany({})
+	.then(function(){
+		db.Coordinate.create({
+			coefficient: coefficient,
+			height: height,
+			x: H,
+			t:T,
+			bounces:nbounce
+		})
+		.then(function(newCoordinates){
+			res.json(newCoordinates);
+		})
+		.catch(function(err){
+			res.send(err);
+		})	
+	}).catch(function(err){
+		console.log(err);
 	})
-	.then(function(newCoordinates){
-		res.json(newCoordinates);
-	})
-	.catch(function(err){
-		res.send(err);
-	})
+	
 	
 });
 

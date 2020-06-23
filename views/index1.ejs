@@ -12,12 +12,12 @@
     <script>
         function MainCtrl($scope, $http){
 
-        	var h0 = 5      
+        	var h0 = "<%=coord[0].height%>"  
 			var v = 0         
 			var g = 10       
 			var t = 0         
 			var dt = 0.01    
-			var rho = 0.75   
+			var rho = "<%= coord[0].coefficient%>"
 			var tau = 0.10     
 			var hmax = h0      
 			var h = h0
@@ -72,7 +72,7 @@
     <script>
     angular.module('BouncingBall',['AngularChart'], function( $routeProvider, $locationProvider ){
         $routeProvider.when('/',{
-            template: '<chart title="BouncingBall" xData="lineChartXData" yData="lineChartYData" xName="Time" yName="Height" subtitle="Height of the ball vs time, for a fixed coefficient of restitution and initial height"></chart>',
+            template: '<chart title="BouncingBall" xData="lineChartXData" yData="lineChartYData" xName="Time" yName="Height(IN DECIMETRE)" subtitle="Height of the ball vs time, for a fixed coefficient of restitution and initial height"></chart>',
             controller: MainCtrl
             })
     })
@@ -81,13 +81,13 @@
 		Current Data - 
 	</h2>
 	<h3>
-		Initial Height(m) = 5
+		Initial Height(m) = <%= coord[0].height %>
 	</h3>
 	<h3>
-		Coefficient of Restitution = 0.75
+		Coefficient of Restitution = <%= coord[0].coefficient %>
 	</h3>
 	<h3>
-		Number of Bounces  = 11
+		Number of Bounces  = <%= coord[0].bounces %>
 	</h3>	
 	<h1>
 		Enter Data - 
@@ -99,7 +99,7 @@
         </div>
         <div>
 				<label>Enter Coefficient of Restitution - Range (0,1) - </label>
-                <input type="number" name="coefficient" placeholder="Coefficient of Restitution" step = "0.1">
+                <input type="number" name="coefficient" placeholder="Coefficient of Restitution" step = "0.01">
         </div>
 		<div>
                 <button >Submit</button>
