@@ -84,7 +84,7 @@ app.post("/api/coordinates",(req,res)=>{
 			bounces:nbounce
 		})
 		.then(function(newCoordinates){
-			res.json(newCoordinates);
+			res.redirect("/graph");
 		})
 		.catch(function(err){
 			res.send(err);
